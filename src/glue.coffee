@@ -1,8 +1,3 @@
-camelCase = (s) ->
-  (->
-    console.log 'foo'
-  )()
-
 isString = (obj) ->
   obj.constructor == String
 
