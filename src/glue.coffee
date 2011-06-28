@@ -10,6 +10,23 @@ createTemplate = (tmpl) ->
   div.innerHTML = tmpl
   jQuery div
   
+findDataAttr = (field, key) ->
+  dataAttr = ''
+  if field.dataset
+    dataAttr = field.dataset['glue' + key[0].toUpperCase() + key.split('').splice(1,key.length).join '']
+  else
+    dataAttr = attr for attr in field.attributes when attr.name == 'data-glue-' + key
+  dataAttr.value || dataAttr
+  
+parse = (field, key, value) ->
+  field = field.cloneNode true
+  dataAttr = findDataAttr field, key
+  if(dataAttr)
+    field[dataAttr] = value
+  else
+    field.textContent = value
+  field
+  
 glue = (template, data) ->
   return data if !data || !data.length
   data.reverse()
@@ -20,9 +37,7 @@ glue = (template, data) ->
     for own key, value of curr
       field = tmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
       if field
-        field = field.cloneNode true
-        field.textContent = value
-        res.push field
+        res.push parse field, key, value
 	
   res
   
