@@ -10,3 +10,12 @@ test('no data returns nothing', function() {
 				.glue([]);
 	ok(!res.length);
 });
+
+test('inplace template will parse out', function() {
+	var tmpl = '<span data-glue-foo></span>',
+		res = glue(tmpl, [ { foo: 'bar' } ]);
+		;
+	
+	ok(res.length);
+	ok(res.length === 1);
+});

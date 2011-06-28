@@ -4,12 +4,17 @@ isString = (obj) ->
 isjQuery = (obj) ->
   obj.constructor == jQuery
   
+createTemplate = (tmpl) ->
+  tmpl = tmpl.html() if isjQuery tmpl
+  div = document.createElement 'div'
+  div.innerHTML = tmpl
+  jQuery div
+  
 glue = (template, data) ->
   return data if !data || !data.length
   data.reverse()
   res = []
-  tmpl = $(template) if isString template
-  tmpl = $('<div></div>').html template.html() if isjQuery template
+  tmpl = createTemplate template
   while data.length
     curr = data.pop()
     for own key, value of curr
@@ -19,10 +24,10 @@ glue = (template, data) ->
         field.textContent = value
         res.push field
 	
-  jQuery res
+  res
   
 jQuery.fn.extend 
   glue: (data) ->
-    glue this, data
+    jQuery glue this, data
 	
 this.glue = glue
