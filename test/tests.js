@@ -19,3 +19,12 @@ test('inplace template will parse out', function() {
 	ok(res.length);
 	ok(res.length === 1);
 });
+
+test('glue attribute rather than innerHTML', function() {
+	var tmpl = '<span data-glue-foo="title">bar</span>',
+		res = glue(tmpl, [ { foo: 'baz' } ]);
+		
+	ok(res.length === 1);
+	ok(res[0].title === 'baz');
+	ok(res[0].innerHTML === 'bar');
+});
