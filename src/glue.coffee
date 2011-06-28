@@ -1,3 +1,8 @@
+camelCaseRegex = /-([a-z])/ig
+camelCase = (s) ->
+  s.replace camelCaseRegex, (all, x) -> x.toUpperCase()
+
+  
 isString = (obj) ->
   obj.constructor == String
 
@@ -13,7 +18,7 @@ createTemplate = (tmpl) ->
 findDataAttr = (field, key) ->
   dataAttr = ''
   if field.dataset
-    dataAttr = field.dataset['glue' + key[0].toUpperCase() + key.split('').splice(1,key.length).join '']
+    dataAttr = field.dataset[camelCase 'glue-' + key]
   else
     dataAttr = attr for attr in field.attributes when attr.name == 'data-glue-' + key
   dataAttr.value || dataAttr
