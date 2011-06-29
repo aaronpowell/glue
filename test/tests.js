@@ -37,8 +37,48 @@ test('nested arrays', function() {
           { foo: 'baz' }
         ] 
       } ]);
-      console.log(res);
-  ok(res.length === 2);
+
+      ok(res.length === 2);
   ok(res[0].innerHTML === 'bar');
   ok(res[1].innerHTML === 'baz');
+});
+
+test('simple array value maps to "value"', function() {
+  var tmpl = '<span data-glue-value></span>',
+    data = [1,2,3],
+    res;
+    
+  res = glue(tmpl, data);
+  
+  ok(res.length === data.length);
+  ok(res[0].innerHTML == data[0]);
+});
+
+test('complex data test', function() {
+  var tmpl = '<span data-glue-foo data-glue-bar="title"></span>',
+    data = [ { foo: 'foo', bar: 'bar' }],
+    res;
+    
+  res = glue(tmpl, data);
+  
+  ok(res.length === 1);
+  ok(res[0].title === 'bar');
+  ok(res[0].innerHTML === 'foo');
+});
+
+test('complex template test', function() {
+  var tmpl = $('#complexTemplate'),
+    data = [],
+    dataCount = 5,
+    res;
+    
+  for(var i=0; i < dataCount; i++) {
+    data.push( { value: i, text: 'item ' + i } );
+  }
+  
+  res = glue(tmpl, data);
+  
+  ok(res.length === 1);
+  ok(res[0].tagName === 'UL');
+  ok(res[0].childNodes === dataCount);
 });

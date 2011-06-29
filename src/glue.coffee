@@ -1,6 +1,9 @@
 camelCaseRegex = /-([a-z])/ig
 camelCase = (s) ->
   s.replace camelCaseRegex, (all, x) -> x.toUpperCase()
+
+isObject = (obj) ->
+  obj.constructor == Object
   
 isString = (obj) ->
   obj.constructor == String
