@@ -28,3 +28,17 @@ test('glue attribute rather than innerHTML', function() {
 	ok(res[0].title === 'baz');
 	ok(res[0].innerHTML === 'bar');
 });
+
+test('nested arrays', function() {
+  var tmpl = '<span data-glue-foo></span>',
+      res = glue(tmpl, [ { 
+        foo: [
+          { foo: 'bar' },
+          { foo: 'baz' }
+        ] 
+      } ]);
+      console.log(res);
+  ok(res.length === 2);
+  ok(res[0].innerHTML === 'bar');
+  ok(res[1].innerHTML === 'baz');
+});

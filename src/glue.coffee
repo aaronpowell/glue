@@ -1,13 +1,15 @@
 camelCaseRegex = /-([a-z])/ig
 camelCase = (s) ->
   s.replace camelCaseRegex, (all, x) -> x.toUpperCase()
-
   
 isString = (obj) ->
   obj.constructor == String
 
 isjQuery = (obj) ->
   obj.constructor == jQuery
+  
+isArray = (obj) ->
+  obj.constructor == Array
   
 createTemplate = (tmpl) ->
   tmpl = tmpl.html() if isjQuery tmpl
@@ -24,14 +26,27 @@ findDataAttr = (field, key) ->
   dataAttr.value || dataAttr
   
 parse = (field, key, value) ->
-  field = field.cloneNode true
-  dataAttr = findDataAttr field, key
-  if(dataAttr)
-    field[dataAttr] = value
+  if isArray value
+    parse field, key, x for own key, x of v for v in value
   else
-    field.textContent = value
-  field
-  
+    field = field.cloneNode true
+    dataAttr = findDataAttr field, key
+    if(dataAttr)
+      field[dataAttr] = value
+    else
+      field.textContent = value
+    field
+    
+flatten = (a) ->
+  result = []
+  while a.length
+    first = a.shift()
+    if isArray first
+      a = first.concat a
+    else
+      result.push first
+  result
+ 
 glue = (template, data) ->
   return data if !data || !data.length
   data.reverse()
@@ -42,8 +57,9 @@ glue = (template, data) ->
     for own key, value of curr
       field = tmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
       if field
-        res.push parse field, key, value
-	
+        parsed = parse field, key, value
+        res.push p for p in flatten parsed if isArray parsed
+        res.push parsed if !isArray parsed
   res
   
 jQuery.fn.extend 
