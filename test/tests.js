@@ -50,8 +50,8 @@ test('simple array value maps to "value"', function() {
     
   res = glue(tmpl, data);
   
-  ok(res.length === data.length);
-  ok(res[0].innerHTML == data[0]);
+  ok(res.length === 3);
+  ok(res[0].innerHTML == 1);
 });
 
 test('complex data test', function() {

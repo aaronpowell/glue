@@ -57,6 +57,9 @@ glue = (template, data) ->
   tmpl = createTemplate template
   while data.length
     curr = data.pop()
+    if !isObject curr
+      curr =
+        value: curr
     for own key, value of curr
       field = tmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
       if field
