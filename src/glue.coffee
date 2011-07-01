@@ -18,7 +18,7 @@ createTemplate = (tmpl) ->
   tmpl = tmpl.html() if isjQuery tmpl
   div = document.createElement 'div'
   div.innerHTML = tmpl
-  jQuery div
+  div
   
 findDataAttr = (field, key) ->
   dataAttr = ''
@@ -32,7 +32,6 @@ parse = (field, key, value) ->
   if isArray value
     parse field, key, x for own key, x of v for v in value
   else
-    field = field.cloneNode true
     dataAttr = findDataAttr field, key
     if(dataAttr)
       field[dataAttr] = value
@@ -57,15 +56,17 @@ glue = (template, data) ->
   tmpl = createTemplate template
   while data.length
     curr = data.pop()
+    currTmpl = jQuery tmpl.cloneNode true
+    parsed
     if !isObject curr
       curr =
         value: curr
     for own key, value of curr
-      field = tmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
+      field = currTmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
       if field
         parsed = parse field, key, value
         res.push p for p in flatten parsed if isArray parsed
-        res.push parsed if !isArray parsed
+    res.push parsed if !isArray parsed
   res
   
 jQuery.fn.extend 
