@@ -30,17 +30,20 @@ test('glue attribute rather than innerHTML', function() {
 });
 
 test('nested arrays', function() {
-  var tmpl = '<span data-glue-foo></span>',
+  var tmpl = '<div data-glue-bar><span data-glue-foo></span></div>',
       res = glue(tmpl, [ { 
-        foo: [
+        bar: [
           { foo: 'bar' },
           { foo: 'baz' }
         ] 
-      } ]);
+      } ]),
+      childNodes;
 
-      ok(res.length === 2);
-  ok(res[0].innerHTML === 'bar');
-  ok(res[1].innerHTML === 'baz');
+  ok(res.length === 1);
+  childNodes = res[0].childNodes;
+  ok(childNodes.length === 2);
+  ok(childNodes[0].innerHTML === 'bar');
+  ok(childNodes[1].innerHTML === 'baz');
 });
 
 test('simple array value maps to "value"', function() {
