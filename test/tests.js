@@ -69,7 +69,7 @@ test('complex data test', function() {
   ok(res[0].innerHTML === 'foo');
 });
 
-test('complex template test', function() {
+test('implied html itterations', function() {
   var tmpl = $('#complexTemplate'),
     data = [],
     dataCount = 5,
