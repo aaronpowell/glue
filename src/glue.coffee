@@ -35,16 +35,16 @@ innerGlue = (field, array) ->
   while array.length
     curr = array.pop()
     for own key, value of curr
-      f = jQuery field.cloneNode true
-      f = f.find('[data-glue-' + key.toLowerCase() + ']').get 0
+      f = field.filter('[data-glue-' + key.toLowerCase() + ']').get 0
       if f
+        f = f.cloneNode true
         parsed = parse f, key, value
         res.push parsed
   res
   
 parse = (field, key, value) ->
   if isArray value
-    x = innerGlue field, value.reverse()
+    x = innerGlue jQuery(field).children(), value.reverse()
     jQuery(field).empty()
     jQuery(x).appendTo field for y in x
     field
