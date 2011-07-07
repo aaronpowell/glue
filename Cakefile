@@ -22,18 +22,18 @@ makeUgly = (err, str, file) ->
 task 'cleanup', 'cleans up the libs before a release', ->
 	clean()
 	
-task 'build', 'builds glue', ->
-    console.log 'building glue from coffeescript'
+task 'build', "builds #{file}", ->
+    console.log "building #{file} from coffeescript"
     code = fs.readFileSync "#{source}/#{file}.coffee", 'utf8'
     fs.writeFile "#{output}/#{file}.js", CoffeeScript.compile code
 	
-task 'minify', 'minifies glue to a release build', ->
-	console.log 'minifying glue'
+task 'minify', "minifies #{file} to a release build", ->
+	console.log "minifying #{file}"
 	files = fs.readdirSync 'lib'
 	files = ("#{output}/" + file for file in files when file.match(/\.js$/))
 	(fs.readFile file, 'utf8', (err, data) -> makeUgly err, data, file) for file in files
 	
-task 'release', 'creates a release of glue', ->
+task 'release', 'creates a release of #{file}', ->
     invoke 'cleanup'
     invoke 'build'
     invoke 'minify'
@@ -44,4 +44,9 @@ task 'watch', 'Watch prod source files and build changes', ->
     fs.watchFile "#{source}/#{file}.coffee", (curr, prev) ->
         if +curr.mtime isnt +prev.mtime
             console.log "Saw change in #{source}/#{file}.coffee"
-            invoke 'build'
+            try
+              invoke 'build'
+              console.log 'build complete'
+            catch e
+              console.log e
+

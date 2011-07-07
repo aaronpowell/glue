@@ -1,4 +1,5 @@
 camelCaseRegex = /-([a-z])/ig
+wrapperId = 'glue-root'
 camelCase = (s) ->
   s.replace camelCaseRegex, (all, x) -> x.toUpperCase()
 
@@ -17,6 +18,7 @@ isArray = (obj) ->
 createTemplate = (tmpl) ->
   tmpl = tmpl.html() if isjQuery tmpl
   div = document.createElement 'div'
+  div.id = wrapperId
   div.innerHTML = tmpl
   div
   
@@ -28,26 +30,24 @@ findDataAttr = (field, key) ->
     dataAttr = attr for attr in field.attributes when attr.name == 'data-glue-' + key
   dataAttr.value || dataAttr
   
-process = (tmpl, data) ->
+innerGlue = (field, array) ->
   res = []
-  while data.length
-    curr = data.pop()
-    currTmpl = jQuery tmpl.cloneNode true
-    parsed
-    if !isObject curr
-      curr =
-        value: curr
+  while array.length
+    curr = array.pop()
     for own key, value of curr
-      field = currTmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
-      if field
-        parsed = parse field, key, value
-        res.push p for p in flatten parsed if isArray parsed
-    res.push parsed if !isArray parsed
+      f = jQuery field.cloneNode true
+      f = f.find('[data-glue-' + key.toLowerCase() + ']').get 0
+      if f
+        parsed = parse f, key, value
+        res.push parsed
   res
   
 parse = (field, key, value) ->
   if isArray value
-    process field, value.reverse()
+    x = innerGlue field, value.reverse()
+    jQuery(field).empty()
+    jQuery(x).appendTo field for y in x
+    field
   else
     dataAttr = findDataAttr field, key
     if(dataAttr)
@@ -70,7 +70,21 @@ glue = (template, data) ->
   return data if !data || !data.length
   data.reverse()
   tmpl = createTemplate template
-  process tmpl, data
+  res = []
+  while data.length
+    curr = data.pop()
+    currTmpl = jQuery tmpl.cloneNode true
+    parsed
+    if !isObject curr
+      curr =
+        value: curr
+    for own key, value of curr
+      field = currTmpl.find('[data-glue-' + key.toLowerCase() + ']').get 0
+      if field
+        parsed = parse field, key, value
+        res.push p for p in flatten parsed if isArray parsed
+    res.push parsed if !isArray parsed
+  res
   
 jQuery.fn.extend 
   glue: (data) ->
