@@ -45,7 +45,7 @@ task 'watch', 'Watch prod source files and build changes', ->
         if +curr.mtime isnt +prev.mtime
             console.log "Saw change in #{source}/#{file}.coffee"
             try
-              invoke 'build'
+              invoke 'release'
               console.log 'build complete'
             catch e
               console.log e
